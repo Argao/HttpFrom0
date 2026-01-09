@@ -42,7 +42,7 @@ class Program
     /// O stream é fechado quando a leitura termina.
     /// Equivalente a: func getLinesChannel(f io.ReadCloser) &lt;-chan string
     /// </summary>
-    static async IAsyncEnumerable<string> GetLinesChannel(Stream stream)
+    private static async IAsyncEnumerable<string> GetLinesChannel(Stream stream)
     {
         await using (stream) // equivalente a "defer f.Close()" em Go
         {

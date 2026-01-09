@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using TcpListener.RequestObjects;
 
 namespace TcpListener;
 
@@ -10,6 +11,8 @@ class Program
 
     public static async Task Main()
     {
+
+      
       
         var listener = new System.Net.Sockets.TcpListener(IPAddress.Any,42069);
         Console.WriteLine($"Listening on {IPAddress.Any}:{42069}");
@@ -22,10 +25,12 @@ class Program
                 var conn = await listener.AcceptTcpClientAsync();
                 await using var stream = conn.GetStream(); // NetworkStream
 
-                await foreach (var line in GetLinesChannel(stream))
+                var teste = new Request(stream);
+
+                /*await foreach (var line in GetLinesChannel(stream))
                 {
                     Console.WriteLine($"read: {line}");
-                }
+                }*/
                 conn.Close();      
             }
         }

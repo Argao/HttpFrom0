@@ -1,3 +1,4 @@
+using System.Text;
 using FluentAssertions;
 using TcpListener;
 using TcpListener.RequestObjects;
@@ -7,22 +8,47 @@ namespace RequestTests;
 
 public class RequestTest
 {
-    [Fact]
-    public void GetRequestLine()
+    private static Stream StringToStream(string text)
     {
-        var request = new Request( new StreamReader("GET / HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n"));
+        return new MemoryStream(Encoding.UTF8.GetBytes(text));
+    }
+    
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(15)]
+    public void GetRequestLine(int n)
+    {
+        var text = "GET / HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n";
+        var request = new Request(StringToStream(text));
 
         request.Should().NotBeNull();
         request.RequestLine.Method.Should().Be("GET");
         request.RequestLine.RequestTarget.Should().Be("/");
-        request.RequestLine.HttpVersion.Should().Be("1.1");
+         request.RequestLine.HttpVersion.Should().Be("1.1");
     }
     
-    [Fact]
-    public void GetRequestLineWithPath()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(15)]
+    public void GetRequestLineWithPath(int n)
     {
-        var request = new Request( new StreamReader("GET /coffee HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n"));
-
+        var text = "GET /coffee HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n";
+        
+        var request = new Request(StringToStream(text));
         
         request.Should().NotBeNull();
         request.RequestLine.Method.Should().Be("GET");
@@ -30,13 +56,23 @@ public class RequestTest
         request.RequestLine.HttpVersion.Should().Be("1.1");
     }
 
-    [Fact]
-    public void InvalidNumberOfPartsInRequestLine()
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(15)]
+    public void InvalidNumberOfPartsInRequestLine(int n)
     {
-        FluentActions.Invoking(() =>
-                new Request(new StreamReader(
-                    "/coffee HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n")))
+        var text = "/coffee HTTP/1.1\r\nHost: localhost:42069\r\nUser-Agent: curl/7.81.0\r\nAccept: */*\r\n\r\n";
+      
+        
+        FluentActions.Invoking(() => new Request(StringToStream(text)))
             .Should()
-            .Throw<BadStartLineException>();
+            .Throw<InvalidRequestLine>();
     }
 }

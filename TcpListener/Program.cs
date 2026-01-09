@@ -1,28 +1,39 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
-namespace HttpFrom0;
+namespace TcpListener;
 
 class Program
 {
-    const string InputFilePath = "messages.txt";
+   
 
     public static async Task Main()
     {
+      
+        var listener = new System.Net.Sockets.TcpListener(IPAddress.Any,42069);
+        Console.WriteLine($"Listening on {IPAddress.Any}:{42069}");
+        listener.Start();
+
         try
         {
-            var stream = File.OpenRead(InputFilePath);
-            
-            Console.WriteLine($"Reading data from {InputFilePath}");
-            Console.WriteLine("=====================================");
-
-            await foreach (var line in GetLinesChannel(stream))
+            while (true)
             {
-                Console.WriteLine($"read: {line}");
+                var conn = await listener.AcceptTcpClientAsync();
+                await using var stream = conn.GetStream(); // NetworkStream
+
+                await foreach (var line in GetLinesChannel(stream))
+                {
+                    Console.WriteLine($"read: {line}");
+                }
+                conn.Close();      
             }
         }
-        catch (FileNotFoundException)
+        catch (Exception e)
         {
-            await Console.Error.WriteLineAsync($"could not open {InputFilePath}");
+            listener.Stop();
+            Console.WriteLine(e);
+            throw;
         }
     }
 

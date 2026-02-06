@@ -21,13 +21,18 @@ public class RequestLine
     {
         if (!Method.All(c => char.IsLetter(c) && char.IsUpper(c)))
         {
-            throw new InvalidRequestLine("Invalid method format");
+            throw new MalformedRequestLineException("Invalid method format");
         }
 
         if (HttpVersion != "1.1")
         {
-            throw new InvalidRequestLine("Invalid Http Version ");
+            throw new UnsupportedHttpVersionException("Invalid Http Version ");
         }
         
+    }
+
+    public override string ToString()
+    {
+        return $"ResquestLine:\n- Method: {Method}\n- Target: {RequestTarget}\n- Version: {HttpVersion}\"";
     }
 }

@@ -27,6 +27,8 @@ class Program
 
                 var teste = new Request(stream);
 
+                Console.WriteLine(teste.RequestLine.ToString());
+
                 /*await foreach (var line in GetLinesChannel(stream))
                 {
                     Console.WriteLine($"read: {line}");
@@ -42,6 +44,12 @@ class Program
         }
     }
 
+    
+    
+    
+    
+    
+    
     /// <summary>
     /// Lê linhas de um stream, 8 bytes por vez.
     /// O stream é fechado quando a leitura termina.
